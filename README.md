@@ -18,6 +18,12 @@ You can see if running [here](https://github.com/PurpleKingdomGames/tyrian-todo)
 
 *Let us [know](https://github.com/PurpleKingdomGames/tyrian/issues) if you discover anything worth sharing.*
 
+## Implementation
+
+This project was built using the official TodoMVC [template](https://github.com/tastejs/todomvc-app-template) and [specification](https://github.com/tastejs/todomvc/blob/master/app-spec.md), and is based on the standard `tyrian.g8` project. To begin your own project the same way, enter the following on your command line:
+
+`sbt new PurpleKingdomGames/tyrian.g8`
+
 ## Credit
 
 Created by [Dave Smith](https://github.com/davesmith00000)
