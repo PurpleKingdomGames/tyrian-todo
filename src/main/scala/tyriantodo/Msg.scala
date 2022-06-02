@@ -1,6 +1,8 @@
 package tyriantodo
 
 enum Msg:
+
+  // List management
   case NewEditingValue(value: String)
   case SubmitTodo
   case ToggleCompleted(id: Int)
@@ -11,8 +13,14 @@ enum Msg:
   case EditingItemValue(value: String)
   case MarkAll(asComplete: Boolean)
   case ClearCompleted
-  case NoOp
+
+  // Persistance
   case Load(data: String)
   case Save
-  case Log(message: String)
+
+  // Routing
   case ChangeFilter(to: ToDoFilter)
+
+  // Utility
+  case Log(message: String)
+  case NoOp

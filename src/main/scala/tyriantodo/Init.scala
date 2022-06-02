@@ -7,10 +7,9 @@ import tyrian.cmds.LocalStorage
 object Init:
 
   val init: (Model, Cmd[IO, Msg]) =
-    val toMessage: Either[
-      LocalStorage.Result.NotFound,
-      LocalStorage.Result.Found
-    ] => Msg =
+    import LocalStorage.Result
+
+    val toMessage: Either[Result.NotFound, Result.Found] => Msg =
       case Left(_)      => Msg.Log("No save data found")
       case Right(found) => Msg.Load(found.data)
 
@@ -19,9 +18,11 @@ object Init:
         Navigation.getLocationHash {
           case Navigation.Result.CurrentHash(hash) =>
             Msg.ChangeFilter(ToDoFilter.fromString(hash))
-          case _ => Msg.NoOp
+
+          case _ =>
+            Msg.NoOp
         },
-        LocalStorage.getItem(TyrianTodo.LocalStorageKey, toMessage)
+        LocalStorage.getItem(Config.LocalStorageKey, toMessage)
       )
 
     (Model.initial, cmds)

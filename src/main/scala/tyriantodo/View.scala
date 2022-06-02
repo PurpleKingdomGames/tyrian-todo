@@ -127,7 +127,7 @@ object Components:
       )("Clear completed")
     )
 
-  def todoPageFooter: Html[Msg] =
+  val todoPageFooter: Html[Msg] =
     footer(_class := "info")(
       p("Double-click to edit a todo"),
       p(

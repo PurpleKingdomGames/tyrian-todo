@@ -19,7 +19,7 @@ object Update:
       (
         model,
         LocalStorage.setItem(
-          TyrianTodo.LocalStorageKey,
+          Config.LocalStorageKey,
           model.serialise,
           _ => Msg.Log(s"Saved ${model.todos.length} todos")
         )

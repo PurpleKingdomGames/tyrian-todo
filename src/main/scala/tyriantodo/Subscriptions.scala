@@ -1,24 +1,26 @@
 package tyriantodo
 
 import cats.effect.IO
-import org.scalajs.dom
+import org.scalajs.dom.KeyboardEvent
+import org.scalajs.dom.window
 import tyrian.*
 
 object Subscriptions:
 
   def subscriptions(model: Model): Sub[IO, Msg] =
     Sub.Batch(
-      Sub.fromEvent[IO, dom.KeyboardEvent, Msg](
-        "keyup",
-        dom.window
-      ) { e =>
-        if e.keyCode == 13 then Some(Msg.SubmitTodo) else None
-      },
-      Sub.fromEvent[IO, dom.KeyboardEvent, Msg](
-        "keyup",
-        dom.window
-      ) { e =>
-        if e.keyCode == 27 then Some(Msg.StopEditingAll) else None
+      Sub.fromEvent[IO, KeyboardEvent, Msg]("keyup", window) { e =>
+        e.keyCode match
+          case 13 =>
+            // Enter key
+            Some(Msg.SubmitTodo)
+
+          case 27 =>
+            // Escape key
+            Some(Msg.StopEditingAll)
+
+          case _ =>
+            None
       },
       Navigation.onLocationHashChange(hashChange =>
         Msg.ChangeFilter(ToDoFilter.fromString(hashChange.newFragment))

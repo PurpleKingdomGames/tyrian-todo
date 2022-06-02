@@ -9,8 +9,6 @@ import scala.scalajs.js.annotation.*
 @JSExportTopLevel("TyrianApp")
 object TyrianTodo extends TyrianApp[Msg, Model]:
 
-  val LocalStorageKey: String = "tyrian-todos"
-
   def init(flags: Map[String, String]): (Model, Cmd[IO, Msg]) =
     Init.init
 
