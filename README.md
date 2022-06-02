@@ -1,6 +1,30 @@
-# Tyrian TODO
+# Tyrian • [TodoMVC](http://todomvc.com)
 
-## Setup instructions
+> Tyrian is an Elm-inspired, purely functional web framework for Scala 3. Its purpose is to make building interactive websites in Scala 3 fun! Tyrian allows you to describe web pages and complex interactions in a way that is elegant, easy to read and easy to reason about.
+
+This is an implementation of the standard TodoMVC project using Tyrian, which acts as a rosetta stone for most common JavaScript frameworks.
+
+You can see if running [here](https://github.com/PurpleKingdomGames/tyrian-todo).
+
+## Resources
+
+- [Website](https://tyrian.indigoengine.io/)
+- [Documentation](https://tyrian.indigoengine.io/concepts/guided-tour/)
+
+### Support
+
+- [Twitter](https://twitter.com/indigoengine)
+- [Discord](https://discord.gg/b5CD47g)
+
+*Let us [know](https://github.com/PurpleKingdomGames/tyrian/issues) if you discover anything worth sharing.*
+
+## Credit
+
+Created by [Dave Smith](https://github.com/davesmith00000)
+
+--
+
+## Running Locally
 
 To run the program in a browser you will need to have yarn (or npm) installed.
 
