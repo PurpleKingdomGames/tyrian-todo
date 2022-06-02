@@ -14,7 +14,7 @@ lazy val tyriantodo =
       name         := "tyriantodo",
       version      := "0.0.1",
       scalaVersion := "3.1.2",
-      organization := "io.indigoengine",
+      organization := "com.purplekingdomgames",
       libraryDependencies ++= Seq(
         "io.indigoengine" %%% "tyrian-io" % "0.5.0",
         "org.scalameta"   %%% "munit"     % "0.7.29" % Test

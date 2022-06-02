@@ -1,4 +1,4 @@
-package io.indigoengine
+package tyriantodo
 
 class TyrianTodoTests extends munit.FunSuite {
 
