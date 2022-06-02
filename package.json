@@ -2,7 +2,7 @@
   "private": true,
   "scripts": {
     "start": "parcel dev.html --no-cache --dist-dir dist --log-level info",
-    "build": "parcel build index.html --dist-dir docs --log-level info"
+    "build": "parcel build index.html --dist-dir docs --log-level info --no-source-maps"
   },
   "devDependencies": {
     "parcel": "^2.1.0",
