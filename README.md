@@ -4,7 +4,7 @@
 
 This is an implementation of the standard TodoMVC project using Tyrian, which acts as a rosetta stone for most common JavaScript frameworks.
 
-You can see if running [here](https://github.com/PurpleKingdomGames/tyrian-todo).
+You can see if running [here](https://purplekingdomgames.github.io/tyrian-todo/).
 
 ## Resources
 
