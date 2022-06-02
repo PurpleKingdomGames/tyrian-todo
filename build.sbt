@@ -39,9 +39,9 @@ lazy val tyriantodo =
     .settings( // Welcome message
       logo := "Tyrian TODO (v" + version.value + ")",
       usefulTasks := Seq(
-        UsefulTask("", "fastOptJS", "Rebuild the JS (use during development)"),
-        UsefulTask("", "fullOptJS", "Rebuild the JS and optimise (use in production)"),
-        UsefulTask("", "code", "Launch VSCode")
+        UsefulTask("a", "fastOptJS", "Rebuild the JS (use during development)"),
+        UsefulTask("b", "fullOptJS", "Rebuild the JS and optimise (use in production)"),
+        UsefulTask("c", "code", "Launch VSCode")
       ),
       logoColor        := scala.Console.MAGENTA,
       aliasColor       := scala.Console.BLUE,
