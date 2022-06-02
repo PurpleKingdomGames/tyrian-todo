@@ -1,6 +1,7 @@
 package tyriantodo
 
 import cats.effect.IO
+import org.scalajs.dom
 import tyrian.Html.*
 import tyrian.*
 
@@ -13,8 +14,20 @@ object TyrianTodo extends TyrianApp[Msg, Model]:
     (Model.initial, Cmd.None)
 
   def update(model: Model): Msg => (Model, Cmd[IO, Msg]) =
-    case Msg.Increment => (model, Cmd.None)
-    case Msg.Decrement => (model, Cmd.None)
+    case Msg.NewEditingValue(newValue) =>
+      (model.copy(editingValue = newValue), Cmd.None)
+
+    case Msg.SubmitNewTodo if model.editingValue.isEmpty =>
+      (model, Cmd.None)
+
+    case Msg.SubmitNewTodo =>
+      val updatedModel =
+        model.copy(
+          editingValue = "",
+          todos = model.todos :+ TodoItem(model.editingValue.trim, false)
+        )
+
+      (updatedModel, Cmd.None)
 
   def view(model: Model): Html[Msg] =
     import Components.*
@@ -24,25 +37,31 @@ object TyrianTodo extends TyrianApp[Msg, Model]:
       else
         List(
           todoMainSection(model),
-          todoAppFooter(0)
+          todoAppFooter(model.todos.filterNot(_.completed).length)
         )
 
     div(
       todoAppSection(
-        todoAppHeader :: appContents
+        todoAppHeader(model.editingValue) :: appContents
       ),
       todoPageFooter
     )
 
   def subscriptions(model: Model): Sub[IO, Msg] =
-    Sub.None
+    Sub.fromEvent[IO, dom.KeyboardEvent, Msg.SubmitNewTodo.type](
+      "keyup",
+      dom.window
+    ) { event =>
+      if event.keyCode == 13 then Some(Msg.SubmitNewTodo) else None
+    }
 
-final case class Model(todos: List[TodoItem])
+final case class Model(editingValue: String, todos: List[TodoItem])
 object Model:
   val initial: Model =
-    Model(Nil)
+    Model("", Nil)
 
 final case class TodoItem(label: String, completed: Boolean)
 
 enum Msg:
-  case Increment, Decrement
+  case NewEditingValue(value: String)
+  case SubmitNewTodo

@@ -8,13 +8,15 @@ object Components:
   def todoAppSection(contents: List[Elem[Msg]]): Html[Msg] =
     section(_class := "todoapp")(contents)
 
-  def todoAppHeader: Html[Msg] =
+  def todoAppHeader(editingValue: String): Html[Msg] =
     header(_class := "header")(
       h1("todos"),
       input(
         _class      := "new-todo",
         placeholder := "What needs to be done?",
-        autoFocus
+        value := editingValue,
+        autoFocus,
+        onInput(s => Msg.NewEditingValue(s))
       )
     )
 
@@ -24,34 +26,29 @@ object Components:
       input(id := "toggle-all", _class := "toggle-all", _type := "checkbox"),
       label(forId := "toggle-all")("Mark all as complete"),
       ul(_class := "todo-list")(
-        // These are here just to show the structure of the list items
-        // List items should get the class `editing` when editing and `completed` when marked as completed
-        li(_class := "completed")(
-          div(_class := "view")(
-            input(_class := "toggle", _type := "checkbox", checked),
-            label("Taste JavaScript"),
-            button(_class := "destroy")()
-          ),
-          input(_class := "edit", value := "Create a TodoMVC template")
-        ),
-        li(
-          div(_class := "view")(
-            input(_class := "toggle", _type := "checkbox"),
-            label("Buy a unicorn"),
-            button(_class := "destroy")()
-          ),
-          input(_class := "edit", value := "Rule the web")
-        )
+        model.todos.map { todo =>
+          li(
+            div(_class := "view")(
+              input(_class := "toggle", _type := "checkbox", checked(todo.completed)),
+              label(todo.label),
+              button(_class := "destroy")()
+            ),
+            input(_class := "edit", value := "Rule the web")
+          )
+        }
       )
     )
 
   // This footer should be hidden by default and shown when there are todos
   def todoAppFooter(count: Int): Html[Msg] =
+    val remainingText =
+      if count == 1 then " item left" else " items left"
+
     footer(_class := "footer")(
       // This should be `0 items left` by default
       span(_class := "todo-count")(
         strong(count.toString),
-        text(" items left")
+        text(remainingText)
       ),
       // Remove this if you don't implement routing
       ul(_class := "filters")(
