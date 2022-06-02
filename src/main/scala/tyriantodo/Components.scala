@@ -14,7 +14,7 @@ object Components:
       input(
         _class      := "new-todo",
         placeholder := "What needs to be done?",
-        value := editingValue,
+        value       := editingValue,
         autoFocus,
         onInput(s => Msg.NewEditingValue(s))
       )
@@ -27,13 +27,40 @@ object Components:
       label(forId := "toggle-all")("Mark all as complete"),
       ul(_class := "todo-list")(
         model.todos.map { todo =>
-          li(
+          // List items should get the class `editing` when editing and `completed` when marked as completed
+          val listClass =
+            if todo.editing then List(_class := "editing")
+            else if todo.completed then List(_class := "completed")
+            else Nil
+
+          val itemId =
+            "item-" + todo.id
+
+          val editingValue =
+            if model.editingItemValue.isEmpty then todo.label
+            else model.editingItemValue
+
+          li(listClass)(
             div(_class := "view")(
-              input(_class := "toggle", _type := "checkbox", checked(todo.completed), onChange(Msg.ToggleCompleted(todo.id))),
-              label(todo.label),
+              input(
+                _class := "toggle",
+                _type  := "checkbox",
+                checked(todo.completed),
+                onChange(Msg.ToggleCompleted(todo.id))
+              ),
+              label(
+                onDoubleClick(Msg.EditItem(todo.id, itemId))
+              )(todo.label),
               button(_class := "destroy", onClick(Msg.RemoveItem(todo.id)))()
             ),
-            input(_class := "edit", value := "Rule the web")
+            input(
+              id := itemId,
+              _class      := "edit",
+              placeholder := "Rule the web",
+              value       := editingValue,
+              onInput(s => Msg.EditingItemValue(s)),
+              onBlur(Msg.SubmitTodo)
+            )
           )
         }
       )
