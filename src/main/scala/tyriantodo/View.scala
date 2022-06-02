@@ -3,6 +3,29 @@ package tyriantodo
 import tyrian.Html.*
 import tyrian.*
 
+object View:
+
+  def view(model: Model): Html[Msg] =
+    import Components.*
+
+    val appContents: List[Elem[Msg]] =
+      if model.todos.isEmpty then Nil
+      else
+        List(
+          todoMainSection(model),
+          todoAppFooter(
+            model.todos.filterNot(_.completed).length,
+            model.anyComplete
+          )
+        )
+
+    div(
+      todoAppSection(
+        todoAppHeader(model.editingValue) :: appContents
+      ),
+      todoPageFooter
+    )
+
 object Components:
 
   def todoAppSection(contents: List[Elem[Msg]]): Html[Msg] =
@@ -35,9 +58,9 @@ object Components:
         model.todos
           .filter { todo =>
             model.filter match
-              case ModelFilter.All       => true
-              case ModelFilter.Active    => !todo.completed
-              case ModelFilter.Completed => todo.completed
+              case ToDoFilter.All       => true
+              case ToDoFilter.Active    => !todo.completed
+              case ToDoFilter.Completed => todo.completed
           }
           .map { todo =>
             // List items should get the class `editing` when editing and `completed` when marked as completed
