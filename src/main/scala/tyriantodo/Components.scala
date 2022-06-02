@@ -31,7 +31,7 @@ object Components:
             div(_class := "view")(
               input(_class := "toggle", _type := "checkbox", checked(todo.completed), onChange(Msg.ToggleCompleted(todo.id))),
               label(todo.label),
-              button(_class := "destroy")()
+              button(_class := "destroy", onClick(Msg.RemoveItem(todo.id)))()
             ),
             input(_class := "edit", value := "Rule the web")
           )

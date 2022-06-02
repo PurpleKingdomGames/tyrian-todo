@@ -38,6 +38,14 @@ object TyrianTodo extends TyrianApp[Msg, Model]:
 
       (updated, Cmd.None)
 
+    case Msg.RemoveItem(id) =>
+      val updated =
+        model.copy(
+          todos = model.todos.filterNot(_.id == id)
+        )
+
+      (updated, Cmd.None)
+
   def view(model: Model): Html[Msg] =
     import Components.*
 
@@ -77,3 +85,4 @@ enum Msg:
   case NewEditingValue(value: String)
   case SubmitNewTodo
   case ToggleCompleted(id: Int)
+  case RemoveItem(id: Int)
