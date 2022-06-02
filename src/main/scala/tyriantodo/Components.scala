@@ -23,46 +23,59 @@ object Components:
   // This section should be hidden by default and shown when there are todos
   def todoMainSection(model: Model): Html[Msg] =
     section(_class := "main")(
-      input(id := "toggle-all", _class := "toggle-all", _type := "checkbox", checked(model.allComplete), onChange(Msg.MarkAll(model.allComplete))),
+      input(
+        id     := "toggle-all",
+        _class := "toggle-all",
+        _type  := "checkbox",
+        checked(model.allComplete),
+        onChange(Msg.MarkAll(model.allComplete))
+      ),
       label(forId := "toggle-all")("Mark all as complete"),
       ul(_class := "todo-list")(
-        model.todos.map { todo =>
-          // List items should get the class `editing` when editing and `completed` when marked as completed
-          val listClass =
-            if todo.editing then List(_class := "editing")
-            else if todo.completed then List(_class := "completed")
-            else Nil
+        model.todos
+          .filter { todo =>
+            model.filter match
+              case ModelFilter.All       => true
+              case ModelFilter.Active    => !todo.completed
+              case ModelFilter.Completed => todo.completed
+          }
+          .map { todo =>
+            // List items should get the class `editing` when editing and `completed` when marked as completed
+            val listClass =
+              if todo.editing then List(_class := "editing")
+              else if todo.completed then List(_class := "completed")
+              else Nil
 
-          val itemId =
-            "item-" + todo.id
+            val itemId =
+              "item-" + todo.id
 
-          val editingValue =
-            if model.editingItemValue.isEmpty then todo.label
-            else model.editingItemValue
+            val editingValue =
+              if model.editingItemValue.isEmpty then todo.label
+              else model.editingItemValue
 
-          li(listClass)(
-            div(_class := "view")(
-              input(
-                _class := "toggle",
-                _type  := "checkbox",
-                checked(todo.completed),
-                onChange(Msg.ToggleCompleted(todo.id))
+            li(listClass)(
+              div(_class := "view")(
+                input(
+                  _class := "toggle",
+                  _type  := "checkbox",
+                  checked(todo.completed),
+                  onChange(Msg.ToggleCompleted(todo.id))
+                ),
+                label(
+                  onDoubleClick(Msg.EditItem(todo.id, itemId))
+                )(todo.label),
+                button(_class := "destroy", onClick(Msg.RemoveItem(todo.id)))()
               ),
-              label(
-                onDoubleClick(Msg.EditItem(todo.id, itemId))
-              )(todo.label),
-              button(_class := "destroy", onClick(Msg.RemoveItem(todo.id)))()
-            ),
-            input(
-              id := itemId,
-              _class      := "edit",
-              placeholder := "Rule the web",
-              value       := editingValue,
-              onInput(s => Msg.EditingItemValue(s)),
-              onBlur(Msg.SubmitTodo)
+              input(
+                id          := itemId,
+                _class      := "edit",
+                placeholder := "Rule the web",
+                value       := editingValue,
+                onInput(s => Msg.EditingItemValue(s)),
+                onBlur(Msg.SubmitTodo)
+              )
             )
-          )
-        }
+          }
       )
     )
 
@@ -84,7 +97,11 @@ object Components:
         li(a(href := "#/completed")("Completed"))
       ),
       // Hidden if no completed items are left
-      button(_class := "clear-completed", hidden(!anyComplete), onClick(Msg.ClearCompleted))("Clear completed")
+      button(
+        _class := "clear-completed",
+        hidden(!anyComplete),
+        onClick(Msg.ClearCompleted)
+      )("Clear completed")
     )
 
   def todoPageFooter: Html[Msg] =

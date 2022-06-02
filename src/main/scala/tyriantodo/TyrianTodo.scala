@@ -27,7 +27,17 @@ object TyrianTodo extends TyrianApp[Msg, Model]:
       case Left(_)      => Msg.Log("No save data found")
       case Right(found) => Msg.Load(found.data)
 
-    (Model.initial, LocalStorage.getItem(localStorageKey, toMessage))
+    val cmds: Cmd[IO, Msg] =
+      Cmd.Batch(
+        Navigation.getLocationHash {
+          case Navigation.Result.CurrentHash(hash) =>
+            Msg.ChangeFilter(ModelFilter.fromString(hash))
+          case _ => Msg.NoOp
+        },
+        LocalStorage.getItem(localStorageKey, toMessage)
+      )
+
+    (Model.initial, cmds)
 
   def update(model: Model): Msg => (Model, Cmd[IO, Msg]) =
     case Msg.Log(msg) =>
@@ -48,6 +58,9 @@ object TyrianTodo extends TyrianApp[Msg, Model]:
 
     case Msg.NoOp =>
       (model, Cmd.None)
+
+    case Msg.ChangeFilter(filter) =>
+      (model.copy(filter = filter), Cmd.None)
 
     case Msg.NewEditingValue(newValue) =>
       (model.copy(editingValue = newValue), Cmd.None)
@@ -189,14 +202,18 @@ object TyrianTodo extends TyrianApp[Msg, Model]:
         dom.window
       ) { e =>
         if e.keyCode == 27 then Some(Msg.StopEditingAll) else None
-      }
+      },
+      Navigation.onLocationHashChange(hashChange =>
+        Msg.ChangeFilter(ModelFilter.fromString(hashChange.newFragment))
+      )
     )
 
 final case class Model(
     editingValue: String,
     editingItemValue: String,
     todos: List[TodoItem],
-    idCount: Int
+    idCount: Int,
+    filter: ModelFilter
 ):
   def currentlyEditing: Boolean =
     todos.exists(_.editing)
@@ -212,7 +229,7 @@ final case class Model(
 
 object Model:
   val initial: Model =
-    Model("", "", Nil, 0)
+    Model("", "", Nil, 0, ModelFilter.All)
 
   def fromSaveData(data: String): Model =
     val l = decode[List[TodoItem]](data).toOption.getOrElse(Nil)
@@ -221,8 +238,21 @@ object Model:
       "",
       "",
       l,
-      l.map(_.id).sorted.headOption.getOrElse(0)
+      l.map(_.id).sorted.headOption.getOrElse(0),
+      ModelFilter.All
     )
+
+enum ModelFilter:
+  case All, Active, Completed
+
+object ModelFilter:
+  def fromString(hash: String): ModelFilter =
+    hash match
+      case "#"           => ModelFilter.All
+      case "#/active"    => ModelFilter.Active
+      case "#/completed" => ModelFilter.Completed
+      case "#!/"         => ModelFilter.Completed
+      case _             => ModelFilter.All
 
 final case class TodoItem(
     id: Int,
@@ -260,3 +290,4 @@ enum Msg:
   case Load(data: String)
   case Save
   case Log(message: String)
+  case ChangeFilter(to: ModelFilter)
