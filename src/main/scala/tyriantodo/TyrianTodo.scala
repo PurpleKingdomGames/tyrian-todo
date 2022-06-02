@@ -21,13 +21,22 @@ object TyrianTodo extends TyrianApp[Msg, Model]:
       (model, Cmd.None)
 
     case Msg.SubmitNewTodo =>
-      val updatedModel =
+      val updated =
         model.copy(
           editingValue = "",
-          todos = model.todos :+ TodoItem(model.editingValue.trim, false)
+          todos = model.todos :+ TodoItem(model.idCount, model.editingValue.trim, false),
+          idCount = model.idCount + 1
         )
 
-      (updatedModel, Cmd.None)
+      (updated, Cmd.None)
+
+    case Msg.ToggleCompleted(id) =>
+      val updated =
+        model.copy(
+          todos = model.todos.map(todo => if todo.id == id then todo.toggle else todo)
+        )
+
+      (updated, Cmd.None)
 
   def view(model: Model): Html[Msg] =
     import Components.*
@@ -55,13 +64,16 @@ object TyrianTodo extends TyrianApp[Msg, Model]:
       if event.keyCode == 13 then Some(Msg.SubmitNewTodo) else None
     }
 
-final case class Model(editingValue: String, todos: List[TodoItem])
+final case class Model(editingValue: String, todos: List[TodoItem], idCount: Int)
 object Model:
   val initial: Model =
-    Model("", Nil)
+    Model("", Nil, 0)
 
-final case class TodoItem(label: String, completed: Boolean)
+final case class TodoItem(id: Int, label: String, completed: Boolean):
+  def toggle: TodoItem =
+    this.copy(completed = !completed)
 
 enum Msg:
   case NewEditingValue(value: String)
   case SubmitNewTodo
+  case ToggleCompleted(id: Int)
