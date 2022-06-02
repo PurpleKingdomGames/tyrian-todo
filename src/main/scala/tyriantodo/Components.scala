@@ -23,7 +23,7 @@ object Components:
   // This section should be hidden by default and shown when there are todos
   def todoMainSection(model: Model): Html[Msg] =
     section(_class := "main")(
-      input(id := "toggle-all", _class := "toggle-all", _type := "checkbox"),
+      input(id := "toggle-all", _class := "toggle-all", _type := "checkbox", checked(model.allComplete), onChange(Msg.MarkAll(model.allComplete))),
       label(forId := "toggle-all")("Mark all as complete"),
       ul(_class := "todo-list")(
         model.todos.map { todo =>
@@ -67,7 +67,7 @@ object Components:
     )
 
   // This footer should be hidden by default and shown when there are todos
-  def todoAppFooter(count: Int): Html[Msg] =
+  def todoAppFooter(count: Int, anyComplete: Boolean): Html[Msg] =
     val remainingText =
       if count == 1 then " item left" else " items left"
 
@@ -84,7 +84,7 @@ object Components:
         li(a(href := "#/completed")("Completed"))
       ),
       // Hidden if no completed items are left
-      button(_class := "clear-completed")("Clear completed")
+      button(_class := "clear-completed", hidden(!anyComplete), onClick(Msg.ClearCompleted))("Clear completed")
     )
 
   def todoPageFooter: Html[Msg] =

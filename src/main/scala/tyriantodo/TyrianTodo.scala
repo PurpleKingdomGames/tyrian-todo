@@ -106,6 +106,24 @@ object TyrianTodo extends TyrianApp[Msg, Model]:
 
       (model, cmd)
 
+    case Msg.MarkAll(asComplete) =>
+      val updated =
+        model.copy(
+          todos = model.todos.map(todo =>
+            if asComplete then todo.markAsComplete else todo.markAsNotComplete
+          )
+        )
+
+      (updated, Cmd.None)
+
+    case Msg.ClearCompleted =>
+      val updated =
+        model.copy(
+          todos = model.todos.filterNot(_.completed)
+        )
+
+      (updated, Cmd.None)
+
   def view(model: Model): Html[Msg] =
     import Components.*
 
@@ -114,7 +132,10 @@ object TyrianTodo extends TyrianApp[Msg, Model]:
       else
         List(
           todoMainSection(model),
-          todoAppFooter(model.todos.filterNot(_.completed).length)
+          todoAppFooter(
+            model.todos.filterNot(_.completed).length,
+            model.anyComplete
+          )
         )
 
     div(
@@ -149,6 +170,12 @@ final case class Model(
   def currentlyEditing: Boolean =
     todos.exists(_.editing)
 
+  def allComplete: Boolean =
+    todos.forall(_.completed)
+
+  def anyComplete: Boolean =
+    todos.exists(_.completed)
+
 object Model:
   val initial: Model =
     Model("", "", Nil, 0)
@@ -161,6 +188,12 @@ final case class TodoItem(
 ):
   def toggle: TodoItem =
     this.copy(completed = !completed)
+
+  def markAsComplete: TodoItem =
+    this.copy(completed = true)
+
+  def markAsNotComplete: TodoItem =
+    this.copy(completed = false)
 
   def startEditing: TodoItem =
     this.copy(editing = true)
@@ -177,4 +210,6 @@ enum Msg:
   case StopEditing(id: Int)
   case StopEditingAll
   case EditingItemValue(value: String)
+  case MarkAll(asComplete: Boolean)
+  case ClearCompleted
   case NoOp
