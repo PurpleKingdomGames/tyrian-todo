@@ -232,13 +232,18 @@ object Model:
     Model("", "", Nil, 0, ModelFilter.All)
 
   def fromSaveData(data: String): Model =
-    val l = decode[List[TodoItem]](data).toOption.getOrElse(Nil)
+    val l =
+      decode[List[TodoItem]](data).toOption.getOrElse(Nil)
+      .zipWithIndex
+      .map { case (todo, i) =>
+        todo.copy(id = i)
+      }
 
     Model(
       "",
       "",
       l,
-      l.map(_.id).sorted.headOption.getOrElse(0),
+      l.length,
       ModelFilter.All
     )
 
