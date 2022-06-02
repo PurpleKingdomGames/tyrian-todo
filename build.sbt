@@ -7,6 +7,8 @@ Global / onChangedBuildSource := ReloadOnSourceChanges
 
 ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.5.0"
 
+val circeVersion = "0.14.1"
+
 lazy val tyriantodo =
   (project in file("."))
     .enablePlugins(ScalaJSPlugin)
@@ -19,6 +21,11 @@ lazy val tyriantodo =
         "io.indigoengine" %%% "tyrian-io" % "0.5.0",
         "org.scalameta"   %%% "munit"     % "0.7.29" % Test
       ),
+      libraryDependencies ++= Seq(
+        "io.circe" %%% "circe-core",
+        "io.circe" %%% "circe-generic",
+        "io.circe" %%% "circe-parser"
+      ).map(_ % circeVersion),
       testFrameworks += new TestFramework("munit.Framework"),
       scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) },
       scalafixOnCompile := true,

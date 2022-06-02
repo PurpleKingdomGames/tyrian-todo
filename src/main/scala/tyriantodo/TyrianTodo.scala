@@ -1,20 +1,51 @@
 package tyriantodo
 
 import cats.effect.IO
+import io.circe._
+import io.circe.generic.auto._
+import io.circe.parser._
+import io.circe.syntax._
 import org.scalajs.dom
 import tyrian.Html.*
 import tyrian.*
 import tyrian.cmds.Dom
+import tyrian.cmds.LocalStorage
+import tyrian.cmds.Logger
 
 import scala.scalajs.js.annotation.*
 
 @JSExportTopLevel("TyrianApp")
 object TyrianTodo extends TyrianApp[Msg, Model]:
 
+  val localStorageKey: String = "tyrian-todos"
+
   def init(flags: Map[String, String]): (Model, Cmd[IO, Msg]) =
-    (Model.initial, Cmd.None)
+    val toMessage: Either[
+      LocalStorage.Result.NotFound,
+      LocalStorage.Result.Found
+    ] => Msg =
+      case Left(_)      => Msg.Log("No save data found")
+      case Right(found) => Msg.Load(found.data)
+
+    (Model.initial, LocalStorage.getItem(localStorageKey, toMessage))
 
   def update(model: Model): Msg => (Model, Cmd[IO, Msg]) =
+    case Msg.Log(msg) =>
+      (model, Logger.info(msg))
+
+    case Msg.Load(data) =>
+      (Model.fromSaveData(data), Cmd.None)
+
+    case Msg.Save =>
+      (
+        model,
+        LocalStorage.setItem(
+          localStorageKey,
+          model.serialise,
+          _ => Msg.Log(s"Saved ${model.todos.length} todos")
+        )
+      )
+
     case Msg.NoOp =>
       (model, Cmd.None)
 
@@ -36,7 +67,7 @@ object TyrianTodo extends TyrianApp[Msg, Model]:
           }
         )
 
-      (updated, Cmd.None)
+      (updated, Cmd.Emit(Msg.Save))
 
     case Msg.SubmitTodo if model.editingValue.isEmpty =>
       (model, Cmd.None)
@@ -55,7 +86,7 @@ object TyrianTodo extends TyrianApp[Msg, Model]:
           idCount = model.idCount + 1
         )
 
-      (updated, Cmd.None)
+      (updated, Cmd.Emit(Msg.Save))
 
     case Msg.ToggleCompleted(id) =>
       val updated =
@@ -64,7 +95,7 @@ object TyrianTodo extends TyrianApp[Msg, Model]:
             model.todos.map(todo => if todo.id == id then todo.toggle else todo)
         )
 
-      (updated, Cmd.None)
+      (updated, Cmd.Emit(Msg.Save))
 
     case Msg.RemoveItem(id) =>
       val updated =
@@ -72,7 +103,7 @@ object TyrianTodo extends TyrianApp[Msg, Model]:
           todos = model.todos.filterNot(_.id == id)
         )
 
-      (updated, Cmd.None)
+      (updated, Cmd.Emit(Msg.Save))
 
     case Msg.EditItem(id, elementId) =>
       val updated =
@@ -114,7 +145,7 @@ object TyrianTodo extends TyrianApp[Msg, Model]:
           )
         )
 
-      (updated, Cmd.None)
+      (updated, Cmd.Emit(Msg.Save))
 
     case Msg.ClearCompleted =>
       val updated =
@@ -122,7 +153,7 @@ object TyrianTodo extends TyrianApp[Msg, Model]:
           todos = model.todos.filterNot(_.completed)
         )
 
-      (updated, Cmd.None)
+      (updated, Cmd.Emit(Msg.Save))
 
   def view(model: Model): Html[Msg] =
     import Components.*
@@ -176,9 +207,22 @@ final case class Model(
   def anyComplete: Boolean =
     todos.exists(_.completed)
 
+  def serialise: String =
+    todos.asJson.noSpaces
+
 object Model:
   val initial: Model =
     Model("", "", Nil, 0)
+
+  def fromSaveData(data: String): Model =
+    val l = decode[List[TodoItem]](data).toOption.getOrElse(Nil)
+
+    Model(
+      "",
+      "",
+      l,
+      l.map(_.id).sorted.headOption.getOrElse(0)
+    )
 
 final case class TodoItem(
     id: Int,
@@ -213,3 +257,6 @@ enum Msg:
   case MarkAll(asComplete: Boolean)
   case ClearCompleted
   case NoOp
+  case Load(data: String)
+  case Save
+  case Log(message: String)
