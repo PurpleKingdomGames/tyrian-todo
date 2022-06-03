@@ -10,7 +10,7 @@ import scala.scalajs.js.annotation.*
 object TyrianTodo extends TyrianApp[Msg, Model]:
 
   def init(flags: Map[String, String]): (Model, Cmd[IO, Msg]) =
-    Init.init
+    Init.init(flags)
 
   def update(model: Model): Msg => (Model, Cmd[IO, Msg]) =
     Update.update(model)

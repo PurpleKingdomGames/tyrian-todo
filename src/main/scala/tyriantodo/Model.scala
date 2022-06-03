@@ -6,6 +6,7 @@ import io.circe.parser._
 import io.circe.syntax._
 
 final case class Model(
+    config: Config,
     editingValue: String,
     editingItemValue: String,
     todos: List[TodoItem],
@@ -28,8 +29,8 @@ final case class Model(
     this.copy(filter = newFilter)
 
 object Model:
-  val initial: Model =
-    Model("", "", Nil, 0, ToDoFilter.All)
+  def initial(config: Config): Model =
+    Model(config, "", "", Nil, 0, ToDoFilter.All)
 
   def fromSaveData(data: String): Model =
     val l =
@@ -41,6 +42,7 @@ object Model:
         }
 
     Model(
+      Config.initial(true),
       "",
       "",
       l,

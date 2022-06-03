@@ -16,14 +16,16 @@ object Update:
       (Model.fromSaveData(data), Cmd.None)
 
     case Msg.Save =>
-      (
-        model,
-        LocalStorage.setItem(
-          Config.LocalStorageKey,
-          model.serialise,
-          _ => Msg.Log(s"Saved ${model.todos.length} todos")
-        )
-      )
+      val cmd: Cmd[IO, Msg] =
+        if model.config.persistData then
+          LocalStorage.setItem(
+            model.config.localStorageKey,
+            model.serialise,
+            _ => Msg.Log(s"Saved ${model.todos.length} todos")
+          )
+        else Cmd.None
+
+      (model, cmd)
 
     case Msg.NoOp =>
       (model, Cmd.None)
