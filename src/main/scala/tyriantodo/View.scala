@@ -15,7 +15,8 @@ object View:
           todoMainSection(model),
           todoAppFooter(
             model.todos.filterNot(_.completed).length,
-            model.anyComplete
+            model.anyComplete,
+            model.filter
           )
         )
 
@@ -103,9 +104,37 @@ object Components:
     )
 
   // This footer should be hidden by default and shown when there are todos
-  def todoAppFooter(count: Int, anyComplete: Boolean): Html[Msg] =
+  def todoAppFooter(
+      count: Int,
+      anyComplete: Boolean,
+      filter: ToDoFilter
+  ): Html[Msg] =
     val remainingText =
       if count == 1 then " item left" else " items left"
+
+    val all =
+      filter match
+        case ToDoFilter.All =>
+          List(_class := "selected", href := "#/")
+
+        case _ =>
+          List(href := "#/")
+
+    val active =
+      filter match
+        case ToDoFilter.Active =>
+          List(_class := "selected", href := "#/active")
+
+        case _ =>
+          List(href := "#/active")
+
+    val completed =
+      filter match
+        case ToDoFilter.Completed =>
+          List(_class := "selected", href := "#/completed")
+
+        case _ =>
+          List(href := "#/completed")
 
     footer(_class := "footer")(
       // This should be `0 items left` by default
@@ -115,9 +144,9 @@ object Components:
       ),
       // Remove this if you don't implement routing
       ul(_class := "filters")(
-        li(a(_class := "selected", href := "#/")("All")),
-        li(a(href := "#/active")("Active")),
-        li(a(href := "#/completed")("Completed"))
+        li(a(all)("All")),
+        li(a(active)("Active")),
+        li(a(completed)("Completed"))
       ),
       // Hidden if no completed items are left
       button(
