@@ -24,6 +24,20 @@ This project was built using the official TodoMVC [template](https://github.com/
 
 `sbt new PurpleKingdomGames/tyrian.g8`
 
+## Performance
+
+I've set up the performance test runner just for some idea of a speed comparison.
+
+Three caveats:
+
+1. I'm running it on my machine!
+2. The Tyrian test is a bit flakey. The tests results are consistent _but_ the test doesn't always complete. I have an idea why...
+3. Please note that the comparisons are being made against the other frameworks the runner was bundled with, which are all a good few versions out of date.
+
+Still. Not bad.
+
+![Performance comparison chart](Performance-Comparison_2022-06-03.png "Performance comparison chart")
+
 ## Credit
 
 Created by [Dave Smith](https://github.com/davesmith00000)
