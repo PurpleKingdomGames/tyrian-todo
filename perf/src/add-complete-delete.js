@@ -63,7 +63,13 @@ function click(className, index)
 {
 	return function(facts)
 	{
-		facts.doc.getElementsByClassName(className)[index].click();
+    // Fudge..
+    var n = facts.doc.getElementsByClassName(className)[index]
+    if(n != undefined){
+      n.click();
+    }
+    // Original..
+    // facts.doc.getElementsByClassName(className)[index].click();
 	};
 }
 
