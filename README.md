@@ -26,15 +26,14 @@ This project was built using the official TodoMVC [template](https://github.com/
 
 ## Performance
 
-I've set up the performance test runner just for some idea of a speed comparison.
+I've set up the performance test runner just for some idea of a speed comparison. I personally don't put too much stock in it as the test scenario is very artifical, but it is fun.
 
-Three caveats:
+Two caveats:
 
-1. I'm running it on my machine!
-2. The Tyrian test is a bit flakey. The tests results are consistent _but_ the test doesn't always complete. I have an idea why...
-3. Please note that the comparisons are being made against the other frameworks the runner was bundled with, which are all a good few versions out of date.
+1. Please note that the comparisons being made are against the other frameworks the runner was bundled with, which are all a good few versions out of date. I didn't make the runner and have no easy way to update them.
+2. Performance seems to be quite system sensitive. So again, while it's a fun test, I wouldn't read more into the results than "we're all in the same ball park."
 
-Still. Not bad.
+> Note: This image was captured against an older version. The test runner for some of the frameworks here seem to have rotted and don't run now. However, the performance of Tyrian 0.7.0 seems to be approximately the same, but is much more stable and enjoys significantly faster start up times.
 
 ![Performance comparison chart](Performance-Comparison_2022-06-03.png "Performance comparison chart")
 
