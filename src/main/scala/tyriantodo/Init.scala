@@ -24,17 +24,6 @@ object Init:
       case Left(_)      => Msg.Log("No save data found")
       case Right(found) => Msg.Load(found.data)
 
-    val navCmd: Cmd.Batch[IO, Msg] =
-      Cmd.Batch(
-        Navigation.getLocationHash[IO, Msg] {
-          case Navigation.Result.CurrentHash(hash) =>
-            Msg.ChangeFilter(ToDoFilter.fromString(hash))
-
-          case _ =>
-            Msg.NoOp
-        }
-      )
-
     val loadCmd: Cmd.Batch[IO, Msg] =
       if persist then
         Cmd.Batch(
@@ -42,4 +31,4 @@ object Init:
         )
       else Cmd.Batch()
 
-    (Model.initial(config), navCmd ++ loadCmd)
+    (Model.initial(config), loadCmd)

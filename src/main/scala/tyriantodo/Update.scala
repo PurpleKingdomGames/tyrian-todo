@@ -138,3 +138,6 @@ object Update:
         )
 
       (updated, Cmd.Emit(Msg.Save))
+
+    case Msg.FollowLink(href) =>
+      (model, Nav.loadUrl(href))

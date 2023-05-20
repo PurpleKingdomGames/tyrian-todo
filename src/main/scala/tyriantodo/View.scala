@@ -52,7 +52,7 @@ object Components:
         _class := "toggle-all",
         _type  := "checkbox",
         checked(model.allComplete),
-        onChange(Msg.MarkAll(!model.allComplete))
+        onChange(_ => Msg.MarkAll(!model.allComplete))
       ),
       label(forId := "toggle-all")("Mark all as complete"),
       ul(_class := "todo-list")(
@@ -83,7 +83,7 @@ object Components:
                   _class := "toggle",
                   _type  := "checkbox",
                   checked(todo.completed),
-                  onChange(Msg.ToggleCompleted(todo.id))
+                  onChange(_ => Msg.ToggleCompleted(todo.id))
                 ),
                 label(
                   onDoubleClick(Msg.EditItem(todo.id, itemId))

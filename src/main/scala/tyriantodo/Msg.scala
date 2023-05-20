@@ -20,6 +20,7 @@ enum Msg:
 
   // Routing
   case ChangeFilter(to: ToDoFilter)
+  case FollowLink(externalHref: String)
 
   // Utility
   case Log(message: String)

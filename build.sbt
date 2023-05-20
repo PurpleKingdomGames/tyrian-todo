@@ -7,7 +7,7 @@ Global / onChangedBuildSource := ReloadOnSourceChanges
 
 ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.5.0"
 
-val circeVersion = "0.14.1"
+val circeVersion = "0.14.5"
 
 lazy val tyriantodo =
   (project in file("."))
@@ -15,10 +15,10 @@ lazy val tyriantodo =
     .settings( // Normal settings
       name         := "tyriantodo",
       version      := "0.0.1",
-      scalaVersion := "3.1.2",
+      scalaVersion := "3.2.2",
       organization := "com.purplekingdomgames",
       libraryDependencies ++= Seq(
-        "io.indigoengine" %%% "tyrian-io" % "0.5.1",
+        "io.indigoengine" %%% "tyrian-io" % "0.7.0",
         "org.scalameta"   %%% "munit"     % "0.7.29" % Test
       ),
       libraryDependencies ++= Seq(
@@ -46,9 +46,9 @@ lazy val tyriantodo =
     .settings( // Welcome message
       logo := "Tyrian TODO (v" + version.value + ")",
       usefulTasks := Seq(
-        UsefulTask("a", "fastOptJS", "Rebuild the JS (use during development)"),
-        UsefulTask("b", "fullOptJS", "Rebuild the JS and optimise (use in production)"),
-        UsefulTask("c", "code", "Launch VSCode")
+        UsefulTask("fastLinkJS", "Rebuild the JS (use during development)").noAlias,
+        UsefulTask("fullLinkJS", "Rebuild the JS and optimise (use in production)").noAlias,
+        UsefulTask("code", "Launch VSCode").noAlias
       ),
       logoColor        := scala.Console.MAGENTA,
       aliasColor       := scala.Console.BLUE,
